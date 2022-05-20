@@ -1,0 +1,447 @@
+<script>
+	import { browser } from '$app/env';
+	import CTAButton from 'src/components/CTAButton.svelte';
+	import FilterDropdown from 'src/components/FilterDropdown.svelte';
+	import FilterModal from 'src/components/FilterModal.svelte';
+	import AwaitingAuth from 'src/components/flashdrive/AwaitingAuth.svelte';
+	const { openInventory, closeInventory } = getContext('notsimple-modal');
+
+	export let isCrafting = false;
+	import {
+		activeUser,
+		allAssetsStore,
+		assetsStore,
+		inventorySelected,
+		lastSelected,
+		now
+	} from 'src/stores/store';
+	import { STAKING_CONTRACT, TRANSACTION_TIMEOUT_MS } from 'src/utils/config';
+	import { afterUpdate, getContext, onMount } from 'svelte';
+	import GreenprintCard from '../GreenprintCard.svelte';
+	import GreenPrintInventory from './GreenPrintInventory.svelte';
+	export let onOkay = () => {};
+	const { open, close } = getContext('simple-modal');
+
+	let child;
+
+	async function handleStake() {
+		if (!$activeUser) return;
+		open(AwaitingAuth);
+		let asset_ids = [];
+
+		$assetsStore
+			.filter((asset) => asset.isSelected == true)
+			.forEach((e) => {
+				asset_ids.push(e.asset_id);
+			});
+
+		let transaction = {
+			actions: [
+				{
+					account: STAKING_CONTRACT,
+					name: 'stake',
+					authorization: [
+						{
+							actor: $activeUser.accountName,
+							permission: $activeUser.requestPermission
+						}
+					],
+					data: {
+						user: $activeUser.accountName,
+						drive_id: drive.asset_id,
+						asset_ids: asset_ids
+					}
+				}
+			]
+		};
+
+		try {
+			let res = await $activeUser.signTransaction(transaction, {
+				broadcast: true,
+				blocksBehind: 3,
+				expireSeconds: 60
+			});
+
+			setTimeout(() => {
+				window.refreshAssets(false, 0, (e) => {
+					if (e) {
+						close();
+					}
+				});
+			}, TRANSACTION_TIMEOUT_MS);
+		} catch (err) {
+		
+			close();
+			window.pushToast(err.message, 'error', 'Transaction error',6);
+		}
+	}
+	function resetSelects() {
+		selectedRarity = rarityFilter[0];
+		selectedSph = shellFilter[0];
+	}
+	let selectedRarity, selectedSph;
+	export let selectedType;
+
+	let typeFilter = [
+		{ name: 'All', id: 1, matcher: 'All' },
+		{ name: 'T420 Art Diorama', id: 2, matcher: 'Diorama' },
+		{ name: 'T420 Art Action', id: 3, matcher: 'Action' },
+		{ name: 'T420 Art Coin', id: 4, matcher: 'Coin' },
+		{ name: 'Lore Tablet', id: 5, matcher: 'Lore Tablet' },
+		{ name: '3D Figure', id: 6, matcher: 'Figure' }
+	];
+
+	let shellFilter = [
+		{ name: 'All', id: 1, min: 0, max: 0 },
+		{ name: '1 - 499', id: 2, min: 1, max: 499 },
+		{ name: '500 - 1,999', id: 3, min: 500, max: 1999 },
+		{ name: '2000 - 9,999', id: 4, min: 2000, max: 9999 },
+		{ name: '10,000 - 49,999', id: 5, min: 10000, max: 49999 },
+		{ name: '50,000 - 99,999', id: 6, min: 50000, max: 99999 },
+		{ name: '100,000+', id: 7, min: 100000, max: 0 }
+	];
+
+	let rarityFilter = [
+		{ name: 'All', id: 1, matcher: 'All' },
+		{ name: 'Common - 4 bits', id: 2, matcher: 'Common' },
+		{ name: 'Uncommon - 16 bits', id: 3, matcher: 'Uncommon' },
+		{ name: 'Epic - 64 bits', id: 4, matcher: 'Epic' },
+		{ name: 'Legendary - 256 bits', id: 5, matcher: 'Legendary' },
+		{ name: 'Mythic - 512 bits', id: 6, matcher: 'Mythic' }
+	];
+	function clearSelects() {
+		$assetsStore.forEach((e) => {
+			e.isSelected = false;
+		});
+	}
+	onMount(() => {
+		if (browser) window.clearSelects = clearSelects;
+	});
+	let isSelected = false;
+	resetSelects();
+	let selected = 0;
+	let power = 0;
+	let storage = 0;
+	$: {
+		let selectedList = $assetsStore.filter((asset) => asset.isSelected);
+		selected = selectedList.length;
+		let tempPower = 0;
+		let tempSize = 0;
+		selectedList.forEach((e) => {
+			if (e.isSelected) {
+				if ($lastSelected == 'staked') {
+					tempPower -= e.weight;
+					tempSize -= e.size;
+				} else {
+					tempPower += e.weight;
+					tempSize += e.size;
+				}
+			}
+		});
+		power = tempPower;
+		storage = tempSize;
+	}
+
+	/* 	function applyRarityFilter(asset) {
+		if (selectedRarity.name == 'All') return true;
+		return asset.data.Rarity == selectedRarity.matcher;
+	}
+
+	function applyTypeFilter(asset) {
+		if (selectedType.name == 'All') return true;
+		return asset.data.Class == selectedType.matcher;
+	}
+	function applyShellFilter(asset) {
+		if (selectedSph.name == 'All') return true;
+
+		return asset.weight / 10000 >= selectedSph.min && asset.weight / 10000 <= selectedSph.max;
+	} */
+
+	let innerWidth;
+</script>
+
+<svelte:window bind:innerWidth />
+<!-- Component that display all NFT Cards -->
+
+<div class="wrapper">
+	<div class="header" class:selectedSection={$inventorySelected === 'staking'}>
+		<p>Inventory</p>
+		<div class="filter">
+			<!-- mobile -->
+			<div class="filter-mobile">
+				<FilterModal
+					bind:this={child}
+					bind:raritySelected={selectedRarity}
+					bind:shellSelected={selectedSph}
+				/>
+
+				<CTAButton
+					onClick={() => child.toggleModal()}
+					outlined
+					text="FILTERS"
+					fontSize="14px"
+					width="145px"
+					height="50px"
+				/>
+			</div>
+
+			<!-- desktop -->
+			<!-- <div class="filter-desktop">
+				<FilterDropdown
+					width="180px"
+					text="Rarity"
+					bind:selected={selectedRarity}
+					filterItems={rarityFilter}
+				/>
+				<FilterDropdown
+					width="150px"
+					text="Shellinium/h range"
+					bind:selected={selectedSph}
+					filterItems={shellFilter}
+				/>
+				<FilterDropdown
+					width="150px"
+					text="Type"
+					bind:selected={selectedType}
+					filterItems={typeFilter}
+				/>
+			</div> -->
+			<span on:click={resetSelects}>Reset</span>
+		</div>
+	</div>
+	<div class="divider" />
+	<div class="staking-inventory" class:selectedSection={$inventorySelected === 'staking'}>
+		{#if selectedRarity && selectedSph && selectedType}
+			{#each $allAssetsStore.filter((asset) => (asset.data.Rarity == selectedRarity.matcher || selectedRarity.matcher == 'All') && (asset.data.Class == selectedType.matcher || selectedType.matcher == 'All') && ((asset.weight / 10000 >= selectedSph.min && asset.weight / 10000 <= selectedSph.max) || selectedSph.name == 'All')) as nftData}
+				<div
+					on:click={() => {
+						isSelected = false;
+						
+						clearSelects();
+						nftData.isSelected = true;
+
+						if (!nftData.isStaked) {
+							if (
+								!nftData.mutable_data['Last Used'] ||
+								Number(nftData.mutable_data['Last Used']) +
+									3600 * (12 * Number(nftData.mutable_data['Status Type'])) -
+									$now <
+									0
+							)
+								isSelected = nftData;
+						}
+					}}
+				>
+					<GreenprintCard {nftData} />
+				</div>
+			{/each}
+		{/if}
+	</div>
+	<div class="select-nft">
+		<CTAButton
+			disabled={!isSelected}
+			onClick={() => {
+				clearSelects();
+				
+				onOkay(isSelected);
+				closeInventory();
+			}}
+			text="SELECT"
+		/>
+	</div>
+</div>
+
+<!-- 
+
+    breakpoints 
+    @media (min-width: 481px){}
+    @media (min-width: 768px){}
+    @media (min-width: 1024px){}
+    @media (mmin-width: 1201px){}
+ -->
+<style>
+	.select-nft {
+		width: 100%;
+		background-color: #000;
+		height: 60px;
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		margin: 8px 0;
+	}
+	.wrapper {
+		background-color: black;
+		border-collapse: collapse;
+	}
+	.divider {
+		border-bottom: 1px solid rgb(255, 255, 255, 0.4);
+		width: 100%;
+		position: relative;
+	}
+	.header {
+		line-height: 1;
+		color: white;
+		height: 155px;
+
+		max-width: 492px;
+		margin: 0 auto 10px;
+		padding: 26px 30px 16px;
+	}
+
+	.bits-err {
+		color: var(--danger);
+	}
+
+	.header p {
+		font-size: 22px;
+		margin: 0 0 18px;
+	}
+
+	.stake-info div:first-of-type {
+		position: relative;
+	}
+	.stake-info div:first-of-type svg {
+		transform: rotate(270deg);
+		height: 12px;
+		position: absolute;
+		right: -12px;
+		top: 0;
+		bottom: 0;
+		margin: auto;
+	}
+	.filter {
+		display: flex;
+		align-items: center;
+	}
+	.filter span {
+		margin-left: 16px;
+		cursor: pointer;
+		color: var(--primary-teal);
+	}
+	.staking-inventory {
+		position: relative;
+		min-width: 330px;
+		max-width: calc(620px);
+		display: grid;
+		margin: 0 auto;
+		justify-content: center;
+		grid-template-columns: repeat(auto-fit, minmax(160px, 160px));
+		row-gap: 8px;
+		column-gap: 8px;
+		padding-top: 16px;
+		height: 50vh;
+		min-height: 700px;
+		max-height: 700px;
+		overflow-y: scroll;
+		/* border: 1px solid rgb(54, 255, 191, 0.4); */
+		border-top: none;
+	}
+
+	.shell-info {
+		background-color: var(--pure-black);
+		border-top: 1px solid var(--primary-teal);
+		border-bottom: 1px solid var(--primary-teal);
+		/* position: absolute;
+		top: calc(var(--inventory-height) - var(--at-bottom)); */
+		height: 120px;
+		width: 100%;
+		max-width: 620px;
+		color: white;
+		z-index: 4;
+		margin: 14px auto;
+		font-size: 11px;
+
+		display: flex;
+		flex-direction: column;
+		justify-content: space-evenly;
+	}
+	.shell-info-fixed {
+		bottom: 0;
+		position: sticky !important;
+	}
+
+	.border {
+		border-right: 1px solid var(--dark-teal);
+	}
+
+	.stake-info {
+		display: flex;
+		flex: 1 0 auto;
+		align-items: center;
+		margin: 10px 10px;
+		max-width: 620px;
+		min-width: 350px;
+		align-self: center;
+	}
+
+	.stake-info div {
+		flex: 1;
+		display: flex;
+		flex-direction: column;
+		text-align: center;
+		padding: 0 4px;
+		height: 100%;
+	}
+
+	.stake-info div span {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+	}
+	.stake-info .type {
+		color: var(--text-grey);
+		display: flex;
+		justify-content: center;
+		align-items: center;
+	}
+	.stake-info span {
+		flex: 1;
+	}
+
+	.cta-stake {
+		margin: 0 auto 10px;
+	}
+
+	.filter-desktop {
+		display: none;
+	}
+
+	@media (min-width: 481px) {
+		.header {
+			max-width: 620px;
+		}
+	}
+
+	@media (min-width: 768px) {
+		.header {
+			padding: 26px 32px 16px;
+		}
+	}
+
+	@media (min-width: 1024px) {
+	}
+	@media (min-width: 1259px) {
+		.wrapper {
+			margin-right: 10px;
+		}
+		.staking-inventory {
+			height: 100%;
+			min-height: 700px;
+		}
+		.filter-mobile {
+			display: none;
+		}
+		.filter-desktop {
+			display: flex;
+		}
+		.shell-info {
+			display: none;
+		}
+		.header {
+			height: 184px;
+			display: flex;
+			flex-direction: column;
+			justify-content: space-around;
+		}
+	}
+</style>

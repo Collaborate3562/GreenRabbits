@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="utf-8" />
+
+		<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png" />
+		<link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+		<link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+		<link rel="manifest" href="/site.webmanifest" />
+		<link rel="mask-icon" href="/safari-pinned-tab.svg" color="#5bbad5" />
+		<meta name="msapplication-TileColor" content="#da532c" />
+		<meta name="theme-color" content="#ffffff" />
+
+		<meta name="viewport" content="width=device-width, initial-scale=1" />
+		<link rel="stylesheet" href="/global.css" />
+
+		<script
+			crossorigin="anonymous"
+			src="https://polyfill.io/v3/polyfill.min.js?features=smoothscroll"
+		></script>
+		%svelte.head%
+		<script>
+			if (global === undefined) var global = window;
+		</script>
+
+		<!-- 		<link rel="preconnect" href="https://fonts.googleapis.com">
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+		<link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700;900&display=swap" rel="stylesheet"> -->
+
+		<style>
+			@font-face {
+				font-family: 'Lato';
+				src: url('/fonts/lato/400.woff2') format('woff2'),
+					url('/fonts/lato/400.woff') format('woff'), url('/fonts/lato/400.eot') format('eot');
+				font-weight: 400;
+			}
+
+			@font-face {
+				font-family: 'Lato';
+				src: url('/fonts/lato/600.woff2') format('woff2'),
+					url('/fonts/lato/600.woff') format('woff'), url('/fonts/lato/600.eot') format('eot');
+				font-weight: 600;
+			}
+
+			@font-face {
+				font-family: 'Lato';
+				src: url('/fonts/lato/700.woff2') format('woff2'),
+					url('/fonts/lato/700.woff') format('woff'), url('/fonts/lato/700.eot') format('eot');
+				font-weight: 700;
+			}
+
+			@font-face {
+				font-family: 'Lato';
+				src: url('/fonts/lato/900.woff2') format('woff2'),
+					url('/fonts/lato/900.woff') format('woff'), url('/fonts/lato/900.eot') format('eot');
+				font-weight: 900;
+			}
+		</style>
+
+		<style>
+			:root {
+				font-family: 'Lato';
+				--pure-white: #ffffff;
+				--accent-color: #36ffc0;
+				--primary-teal: #36ffc0;
+				--dark-teal: #209973;
+				--dark-grey: #1d1d1d;
+				--new-gray: #121212;
+				--pure-black: #000000;
+				--text-grey: #b1b1b1;
+				--greenish-cyan: rgba(54, 255, 192, 0.3);
+				--danger: #e52659;
+				--danger-highlight: #ed4444;
+				--grayed-out: rgba(255, 255, 255, 0.3);
+				--greenlight_cyan: #36ffc0;
+			}
+
+			html {
+				line-height: 1.5;
+				background: var(--pure-black);
+			}
+
+			body {
+				min-height: 100vh;
+				background: var(--pure-black);
+				font-family: Lato, Arial, Helvetica, sans-serif;
+				margin: 0;
+				overflow-x: hidden;
+			}
+			.flex {
+				display: flex;
+			}
+			.center {
+				justify-content: center;
+				align-items: center;
+			}
+			.unselectable {
+				-webkit-touch-callout: none;
+				-webkit-user-select: none;
+				-khtml-user-select: none;
+				-moz-user-select: none;
+				-ms-user-select: none;
+				user-select: none;
+			}
+
+			.stop-scrolling {
+				height: 100%;
+				overflow: hidden !important;
+			}
+
+			::-webkit-scrollbar {
+				height: 15px;
+			}
+
+			::-webkit-scrollbar-track-piece {
+				background-color: var(--pure-black);
+			}
+
+			::-webkit-scrollbar-thumb:vertical {
+				height: 30px;
+				background-color: #125e46;
+				border-radius: 4px;
+			}
+
+			*,
+			::before,
+			::after {
+				box-sizing: border-box;
+				border-width: 0;
+				border-style: solid;
+				border-color: currentColor;
+			}
+
+			.lwrapper {
+				position: fixed;
+				width: 100%;
+				height: 100%;
+				top: 0;
+				left: 0;
+				right: 0;
+				bottom: 0;
+				background-color: #000;
+				z-index: 999999;
+				cursor: pointer;
+
+				text-align: center;
+				height: 100%;
+			}
+			.loader {
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				height: 100vh;
+				overflow: hidden;
+				flex-direction: column;
+			}
+			.hideloader {
+				visibility: hidden;
+				opacity: 0;
+				transition: opacity 0.1s, visibility 0.1s;
+			}
+			.square-spin > div {
+				-webkit-animation-fill-mode: both;
+				animation-fill-mode: both;
+				width: 88px;
+				height: 56px;
+				background: url('/game_assets/icon.svg');
+				-webkit-animation: square-spin 3s 0s cubic-bezier(0.09, 0.3, 0.6, 0.9) infinite;
+				animation: square-spin 3s 0s cubic-bezier(0.09, 0.3, 0.6, 0.9) infinite;
+			}
+
+			@-webkit-keyframes square-spin {
+				33% {
+					-webkit-transform: perspective(100px) rotateX(0) rotateY(0);
+					transform: perspective(100px) rotateX(0) rotateY(0);
+				}
+				66% {
+					-webkit-transform: perspective(100px) rotateX(0) rotateY(180deg);
+					transform: perspective(100px) rotateX(0) rotateY(180deg);
+				}
+				100% {
+					-webkit-transform: perspective(100px) rotateX(0) rotateY(360deg);
+					transform: perspective(100px) rotateX(0) rotateY(360deg);
+				}
+			}
+			@keyframes square-spin {
+				33% {
+					-webkit-transform: perspective(100px) rotateX(0) rotateY(0);
+					transform: perspective(100px) rotateX(0) rotateY(0);
+				}
+				66% {
+					-webkit-transform: perspective(100px) rotateX(0) rotateY(180deg);
+					transform: perspective(100px) rotateX(0) rotateY(180deg);
+				}
+				100% {
+					-webkit-transform: perspective(100px) rotateX(0) rotateY(360deg);
+					transform: perspective(100px) rotateX(0) rotateY(360deg);
+				}
+			}
+			/* TODO: Move this into className to keep to tailwind way of doing */
+			@-webkit-keyframes pulsate {
+				0% {
+					-webkit-filter: drop-shadow(0px 0px 0px #36ffc0);
+					filter: drop-shadow(0px 0px 0px #36ffc0);
+				}
+				50% {
+					-webkit-filter: drop-shadow(0px 0px 6px #36ffc0);
+					filter: drop-shadow(0px 0px 6px #36ffc0);
+				}
+				100% {
+					-webkit-filter: drop-shadow(0px 0px 0px #36ffc0);
+					filter: drop-shadow(0px 0px 0px #36ffc0);
+				}
+			}
+
+			@-moz-keyframes pulsate {
+				0% {
+					-webkit-filter: drop-shadow(0px 0px 0px #36ffc0);
+					filter: drop-shadow(0px 0px 0px #36ffc0);
+				}
+				50% {
+					-webkit-filter: drop-shadow(0px 0px 6px #36ffc0);
+					filter: drop-shadow(0px 0px 6px #36ffc0);
+				}
+				100% {
+					-webkit-filter: drop-shadow(0px 0px 0px #36ffc0);
+					filter: drop-shadow(0px 0px 0px #36ffc0);
+				}
+			}
+
+			@-ms-keyframes pulsate {
+				0% {
+					-webkit-filter: drop-shadow(0px 0px 0px #36ffc0);
+					filter: drop-shadow(0px 0px 0px #36ffc0);
+				}
+				50% {
+					-webkit-filter: drop-shadow(0px 0px 6px #36ffc0);
+					filter: drop-shadow(0px 0px 6px #36ffc0);
+				}
+				100% {
+					-webkit-filter: drop-shadow(0px 0px 0px #36ffc0);
+					filter: drop-shadow(0px 0px 0px #36ffc0);
+				}
+			}
+
+			@keyframes pulsate {
+				0% {
+					-webkit-filter: drop-shadow(0px 0px 0px #36ffc0);
+					filter: drop-shadow(0px 0px 0px #36ffc0);
+				}
+				50% {
+					-webkit-filter: drop-shadow(0px 0px 6px #36ffc0);
+					filter: drop-shadow(0px 0px 6px #36ffc0);
+				}
+				100% {
+					-webkit-filter: drop-shadow(0px 0px 0px #36ffc0);
+					filter: drop-shadow(0px 0px 0px #36ffc0);
+				}
+			}
+
+			.pulsating {
+				stroke: #4cfdc5;
+				-webkit-animation: pulsate 3s ease-in-out;
+				-webkit-animation-iteration-count: infinite;
+				-moz-animation: pulsate 3s ease-in-out;
+				-moz-animation-iteration-count: infinite;
+				-ms-animation: pulsate 3s ease-in-out;
+				-ms-animation-iteration-count: infinite;
+				animation: pulsate 3s ease-in-out;
+				animation-iteration-count: infinite;
+			}
+			a {
+				color: inherit;
+				text-decoration: inherit;
+			}
+
+			blockquote,
+			dl,
+			dd,
+			h1,
+			h2,
+			h3,
+			h4,
+			h5,
+			h6,
+			hr,
+			figure,
+			p,
+			pre {
+				margin: 0;
+			}
+
+			h1,
+			h2,
+			h3,
+			h4,
+			h5,
+			h6 {
+				font-size: inherit;
+				font-weight: inherit;
+			}
+
+			img,
+			svg,
+			video,
+			canvas,
+			audio,
+			iframe,
+			embed,
+			object {
+				display: block;
+				vertical-align: middle;
+			}
+
+			img,
+			video {
+				max-width: 100%;
+				height: auto;
+			}
+
+			img,
+			svg,
+			video,
+			canvas,
+			audio,
+			iframe,
+			embed,
+			object {
+				display: block;
+				vertical-align: middle;
+			}
+
+			button,
+			input,
+			optgroup,
+			select,
+			textarea {
+				font-family: inherit;
+				font-size: 100%;
+				line-height: 1.15;
+				margin: 0;
+			}
+
+			ol,
+			ul {
+				list-style: none;
+				margin: 0;
+				padding: 0;
+			}
+			.storage-bar {
+				display: none;
+				background-color: #2e2e2e;
+				border-radius: 20px;
+				position: relative;
+				margin: 0 0 15px;
+				height: 10px;
+				width: 100%;
+			}
+			.progress-done {
+				background: var(--primary-teal);
+				box-shadow: 0 0 6px 0 #36ffc0;
+				border-radius: 20px;
+				color: #fff;
+				display: flex;
+				align-items: center;
+				justify-content: center;
+				height: 100%;
+				width: 0%;
+				opacity: 1;
+				transition: 0.3s ease 0.2s;
+				margin: 0;
+			}
+			.ual-auth-button {
+				display: flex;
+				align-items: center;
+				justify-content: space-between;
+			}
+
+			.ual-auth-button div {
+				white-space: nowrap;
+				font-size: 1rem;
+			}
+			.w10 {
+				width: 10%;
+			}
+			.w20 {
+				width: 20%;
+			}
+			.w30 {
+				width: 30%;
+			}
+			.w40 {
+				width: 40%;
+			}
+			.w50 {
+				width: 50%;
+			}
+			.w60 {
+				width: 60%;
+			}
+			.w70 {
+				width: 70%;
+			}
+			.w80 {
+				width: 80%;
+			}
+			.w90 {
+				width: 90%;
+			}
+
+			.w100 {
+				width: 100%;
+			}
+			.flex {
+				display: flex;
+			}
+			.center {
+				justify-content: center;
+				align-items: center;
+			}
+			.column {
+				flex-direction: column;
+			}
+		</style>
+	</head>
+
+	<body style="overflow: hidden">
+		<div id="my-ual-app"></div>
+		<div id="loader" class="lwrapper">
+			<div class="loader">
+				<div class="square-spin">
+					<div></div>
+				</div>
+				<div id="loading-bar" style="margin-top: 19px; width: 200px; min-height: 30px">
+					<div id="storage-bar" class="storage-bar">
+						<div class="progress-done" id="progress-bar"></div>
+					</div>
+				</div>
+				<span
+					id="loading-string"
+					style="
+						color: white;
+						font-size: 20px;
+						font-weight: 900;
+						margin-top: 10px;
+						min-height: 30px;
+					"
+				>
+				</span>
+				<span
+					id="version-number"
+					style="
+						color: rgb(121, 121, 121);
+						font-size: 13px;
+						font-weight: 500;
+						min-height: 30px;
+						position: absolute;
+						top: 20px;
+						left: 20px;
+					"
+				>
+				</span>
+			</div>
+		</div>
+		<div id="greenrabbit">%svelte.body%</div>
+	</body>
+</html>

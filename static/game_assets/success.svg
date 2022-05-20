@@ -1,0 +1,76 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="182" height="141.5" viewBox="0 0 182 141.5">
+    <defs>
+        <filter id="Path_165" width="134" height="134" x="23.5" y="7.5" filterUnits="userSpaceOnUse">
+            <feOffset/>
+            <feGaussianBlur result="blur" stdDeviation="3.5"/>
+            <feFlood flood-color="#36ffc0" flood-opacity=".584"/>
+            <feComposite in2="blur" operator="in"/>
+            <feComposite in="SourceGraphic"/>
+        </filter>
+        <filter id="Ellipse_6" width="41" height="41" x="141" y="0" filterUnits="userSpaceOnUse">
+            <feOffset/>
+            <feGaussianBlur result="blur-2" stdDeviation="5"/>
+            <feFlood flood-color="#36ffc0" flood-opacity=".71"/>
+            <feComposite in2="blur-2" operator="in"/>
+            <feComposite in="SourceGraphic"/>
+        </filter>
+        <filter id="Ellipse_7" width="36" height="36" x="142" y="21" filterUnits="userSpaceOnUse">
+            <feOffset/>
+            <feGaussianBlur result="blur-3" stdDeviation="5"/>
+            <feFlood flood-color="#36ffc0"/>
+            <feComposite in2="blur-3" operator="in"/>
+            <feComposite in="SourceGraphic"/>
+        </filter>
+        <filter id="Ellipse_8" width="41" height="41" x="8" y="98" filterUnits="userSpaceOnUse">
+            <feOffset/>
+            <feGaussianBlur result="blur-4" stdDeviation="5"/>
+            <feFlood flood-color="#36ffc0" flood-opacity=".694"/>
+            <feComposite in2="blur-4" operator="in"/>
+            <feComposite in="SourceGraphic"/>
+        </filter>
+        <filter id="Ellipse_9" width="34" height="34" x="0" y="2" filterUnits="userSpaceOnUse">
+            <feOffset/>
+            <feGaussianBlur result="blur-5" stdDeviation="5"/>
+            <feFlood flood-color="#36ffc0"/>
+            <feComposite in2="blur-5" operator="in"/>
+            <feComposite in="SourceGraphic"/>
+        </filter>
+        <filter id="Ellipse_10" width="34" height="34" x="2" y="90" filterUnits="userSpaceOnUse">
+            <feOffset/>
+            <feGaussianBlur result="blur-6" stdDeviation="5"/>
+            <feFlood flood-color="#36ffc0"/>
+            <feComposite in2="blur-6" operator="in"/>
+            <feComposite in="SourceGraphic"/>
+        </filter>
+        <style>
+            .cls-2{fill:#36ffc0}.cls-5{stroke:none}
+        </style>
+    </defs>
+    <g id="Group_397" transform="translate(-898 -366)">
+        <g filter="url(#Path_165)" transform="matrix(1, 0, 0, 1, 898, 366)">
+            <g id="Path_165-2" fill="none">
+                <path d="M56.5 0A56.5 56.5 0 1 1 0 56.5 56.5 56.5 0 0 1 56.5 0z" class="cls-5" transform="translate(34 18)"/>
+                <path fill="#36ffc0" d="M56.5 5c-6.955 0-13.699 1.361-20.045 4.045-6.132 2.594-11.64 6.308-16.371 11.039-4.731 4.731-8.445 10.24-11.039 16.371C6.361 42.801 5 49.545 5 56.5c0 6.955 1.361 13.699 4.045 20.045 2.594 6.132 6.308 11.64 11.039 16.371 4.731 4.731 10.24 8.445 16.371 11.039C42.801 106.639 49.545 108 56.5 108c6.955 0 13.699-1.361 20.045-4.045 6.132-2.594 11.64-6.308 16.371-11.039 4.731-4.731 8.445-10.24 11.039-16.371C106.639 70.199 108 63.455 108 56.5c0-6.955-1.361-13.699-4.045-20.045-2.594-6.132-6.308-11.64-11.039-16.371-4.731-4.731-10.24-8.445-16.371-11.039C70.199 6.361 63.455 5 56.5 5m0-5C87.704 0 113 25.296 113 56.5S87.704 113 56.5 113 0 87.704 0 56.5 25.296 0 56.5 0z" transform="translate(34 18)"/>
+            </g>
+        </g>
+        <g filter="url(#Ellipse_6)" transform="matrix(1, 0, 0, 1, 898, 366)">
+            <circle id="Ellipse_6-2" cx="5.5" cy="5.5" r="5.5" class="cls-2" transform="translate(156 15)"/>
+        </g>
+        <g filter="url(#Ellipse_7)" transform="matrix(1, 0, 0, 1, 898, 366)">
+            <circle id="Ellipse_7-2" cx="3" cy="3" r="3" class="cls-2" transform="translate(157 36)"/>
+        </g>
+        <g filter="url(#Ellipse_8)" transform="matrix(1, 0, 0, 1, 898, 366)">
+            <g id="Ellipse_8-2" fill="none" stroke="#36ffc0" stroke-width="2px" transform="translate(23 113)">
+                <circle cx="5.5" cy="5.5" r="5.5" class="cls-5"/>
+                <circle cx="5.5" cy="5.5" r="4.5"/>
+            </g>
+        </g>
+        <g filter="url(#Ellipse_9)" transform="matrix(1, 0, 0, 1, 898, 366)">
+            <circle id="Ellipse_9-2" cx="2" cy="2" r="2" class="cls-2" transform="translate(15 17)"/>
+        </g>
+        <g filter="url(#Ellipse_10)" transform="matrix(1, 0, 0, 1, 898, 366)">
+            <circle id="Ellipse_10-2" cx="2" cy="2" r="2" class="cls-2" transform="translate(17 105)"/>
+        </g>
+        <path id="Path_166" fill="none" stroke="#36ffc0" stroke-linejoin="round" stroke-width="6px" d="M-2845.66 15290.142l13.28 13.115 26.725-32.129" transform="translate(3815.66 -14846.692)"/>
+    </g>
+</svg>

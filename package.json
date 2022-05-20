@@ -1,0 +1,51 @@
+{
+	"name": "greenrabbit-frontend",
+	"version": "1.4.0",
+	"scripts": {
+		"dev": "svelte-kit dev",
+		"network:main": "SET MODE=production && svelte-kit dev --host --open",
+		"network:dev": "SET MODE=development && svelte-kit dev --host --open",
+		"build": "svelte-kit build",
+		"preview": "svelte-kit preview",
+		"check": "svelte-check --tsconfig ./tsconfig.json",
+		"check:watch": "svelte-check --tsconfig ./tsconfig.json --watch",
+		"lint": "prettier --check --plugin-search-dir=. . && eslint --ignore-path .gitignore .",
+		"format": "prettier --write --plugin-search-dir=. ."
+	},
+	"devDependencies": {
+		"@eosdacio/ual-wax": "1.4.4",
+		"@panzoom/panzoom": "^4.4.3",
+		"@sveltejs/adapter-vercel": "next",
+		"@sveltejs/kit": "next",
+		"@typescript-eslint/eslint-plugin": "^4.19.0",
+		"@typescript-eslint/parser": "^4.19.0",
+		"eosjs": "^22.1.0",
+		"eslint": "^7.22.0",
+		"eslint-config-prettier": "^8.1.0",
+		"eslint-plugin-svelte3": "^3.2.0",
+		"events": "^3.3.0",
+		"lodash": "^4.17.21",
+		"panzoom": "^9.4.2",
+		"postcss-scss": "^4.0.1",
+		"prettier": "~2.2.1",
+		"prettier-plugin-svelte": "^2.2.0",
+		"saos": "^1.2.0",
+		"siema": "^1.5.1",
+		"svelte": "^3.34.0",
+		"svelte-check": "^2.0.0",
+		"svelte-cloudinary": "^0.2.3",
+		"svelte-preprocess": "^4.0.0",
+		"tslib": "^2.0.0",
+		"typescript": "^4.0.0",
+		"ual-anchor": "^1.0.6",
+		"ual-plainjs-renderer": "https://github.com/hrfounder/ual-plainjs-renderer.git"
+	},
+	"type": "module",
+	"dependencies": {
+		"@splidejs/splide": "^3.6.9",
+		"@splidejs/svelte-splide": "^0.1.15",
+		"js-cookie": "^3.0.0",
+		"p-retry": "^4.6.1",
+		"sveltestrap": "^5.6.3"
+	}
+}
